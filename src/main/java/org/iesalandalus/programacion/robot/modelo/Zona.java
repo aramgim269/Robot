@@ -1,5 +1,7 @@
 package org.iesalandalus.programacion.robot.modelo;
 
+import java.util.Objects;
+
 public record Zona(int ancho, int alto) {
 
     public static final int ANCHO_MINIMO = 10;
@@ -8,8 +10,8 @@ public record Zona(int ancho, int alto) {
     public static final int ALTO_MAXIMO = 100;
 
     public Zona {
-        validarAlto(alto);
         validarAncho(ancho);
+        validarAlto(alto);
     }
 
     public Zona () {
@@ -18,13 +20,13 @@ public record Zona(int ancho, int alto) {
 
     private void validarAncho (int ancho) {
         if (ancho < ANCHO_MINIMO || ancho > ANCHO_MAXIMO){
-            throw new IllegalArgumentException("El valor del ancho de no es válido.");
+            throw new IllegalArgumentException("El valor del ancho no es válido.");
         }
     }
 
     private void validarAlto (int alto) {
         if (alto < ALTO_MINIMO || alto > ALTO_MAXIMO){
-            throw new IllegalArgumentException("El valor del alto de no es válido.");
+            throw new IllegalArgumentException("El valor del alto no es válido.");
         }
     }
 
@@ -33,6 +35,8 @@ public record Zona(int ancho, int alto) {
     }
 
     public boolean pertenece(Coordenada coordenada) {
+        //Objects.requireNonNull(Coordenada, "La coordenada no puedes ser nula.");
+       // return perteneceX(coordenada.x())) &&perteneceY(coordenada.y());
         boolean valor = false;
         if (perteneceX(coordenada.x()) && perteneceY(coordenada.y())) {
             valor = true;

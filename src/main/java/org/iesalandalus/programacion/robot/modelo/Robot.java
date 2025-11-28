@@ -1,5 +1,6 @@
 package org.iesalandalus.programacion.robot.modelo;
 
+import javax.naming.OperationNotSupportedException;
 import java.util.Objects;
 
 public class Robot {
@@ -10,52 +11,68 @@ public class Robot {
 
     public Robot() {
         this.zona = new Zona();
-        this.coordenada = this.zona.getCentro();
-        this.orientacion = Orientacion.NORTE;
+        setCoordenada(this.zona.getCentro());
+        setOrientacion(Orientacion.NORTE);
     }
 
     public Robot(Zona zona) {
+        this();
         setZona(zona);
         setCoordenada(zona.getCentro());
         setOrientacion(Orientacion.NORTE);
     }
 
     public Robot(Zona zona, Orientacion orientacion) {
+        this();
         setZona(zona);
         setCoordenada(zona.getCentro());
         setOrientacion(orientacion);
     }
 
     public Robot(Zona zona, Orientacion orientacion, Coordenada coordenada) {
+        this();
         setZona(zona);
         setCoordenada(coordenada);
         setOrientacion(orientacion);
     }
 
     public Robot(Robot robot) {
+        //this();
+        //setZona(robot.getZona());
+        //setOrientacion(robot.getOrientacion());
+        //setCoordenada(robot.getCoordenada());
+        this();
         this.zona = robot.getZona();
-        this.orientacion = robot.getOrientacion();
         this.coordenada = robot.getCoordenada();
+        this.orientacion = robot.orientacion;
     }
 
     public Zona getZona() {
-        return zona;
+        return new Zona(this.zona.ancho(), this.zona.alto());
     }
 
     private void setZona(Zona zona) {
-        this.zona = zona;
+
+        if (zona == null)
+            throw new NullPointerException("La zona no puede ser null");
+        this.zona = new Zona(zona.ancho(),zona.alto());
     }
 
     public Coordenada getCoordenada() {
-        return coordenada;
+        return new Coordenada(coordenada.x(), coordenada.y());
     }
 
     private void setCoordenada(Coordenada coordenada) {
-        if (this.zona.pertenece(coordenada))
-            this.coordenada = coordenada;
-        else
-            throw new IllegalArgumentException("Fuera del límite.");
+       // if (this.zona.pertenece(coordenada))
+            //this.coordenada = new Coordenada(coordenada.x(), coordenada.y());
+        // else
+        //    throw new IllegalArgumentException("Fuera del límite.");
+        if (coordenada == null) {
+            throw new NullPointerException("La coordenada no puede ser null");
+        }
+        this.coordenada = new Coordenada(coordenada.x(), coordenada.y());
     }
+
 
     public Orientacion getOrientacion() {
         return orientacion;
@@ -66,17 +83,19 @@ public class Robot {
     }
 
     public void avanzar() throws RobotExcepcion {
+        Coordenada nuevaPosicion = null;
         try {
             switch (this.orientacion) {
-                case NORTE -> new Coordenada(this.coordenada.x(), this.coordenada.y() + 1);
-                case ESTE -> new Coordenada(this.coordenada.x() + 1, this.coordenada.y());
-                case NORESTE -> new Coordenada(this.coordenada.x() + 1, this.coordenada.y() + 1);
-                case SUR -> new Coordenada(this.coordenada.x(), this.coordenada.y() - 1);
-                case NOROESTE -> new Coordenada(this.coordenada.x() - 1, this.coordenada.y() + 1);
-                case OESTE -> new Coordenada(this.coordenada.x() - 1, this.coordenada.y());
-                case SUROESTE -> new Coordenada(this.coordenada.x() - 1, this.coordenada.y() - 1);
-                case SURESTE -> new Coordenada(this.coordenada.x() + 1, this.coordenada.y() - 1);
+                case NORTE -> nuevaPosicion = new Coordenada(this.coordenada.x(), this.coordenada.y() + 1);
+                case ESTE -> nuevaPosicion = new Coordenada(this.coordenada.x() + 1, this.coordenada.y());
+                case NORESTE -> nuevaPosicion = new Coordenada(this.coordenada.x() + 1, this.coordenada.y() + 1);
+                case SUR -> nuevaPosicion = new  Coordenada(this.coordenada.x(), this.coordenada.y() - 1);
+                case NOROESTE -> nuevaPosicion = new  Coordenada(this.coordenada.x() - 1, this.coordenada.y() + 1);
+                case OESTE -> nuevaPosicion = new  Coordenada(this.coordenada.x() - 1, this.coordenada.y());
+                case SUROESTE -> nuevaPosicion = new  Coordenada(this.coordenada.x() - 1, this.coordenada.y() - 1);
+                case SURESTE -> nuevaPosicion = new  Coordenada(this.coordenada.x() + 1, this.coordenada.y() - 1);
             }
+            setCoordenada(nuevaPosicion);
         } catch (IllegalArgumentException e) {
             throw new RobotExcepcion("Has llegado al limite de la zona");
         }
